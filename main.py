@@ -1,5 +1,5 @@
 import pygame
-
+from random import random
 
 class Sprite:
     def __init__(self, center, image):
@@ -43,7 +43,10 @@ class Ball(Sprite):
                 self.rect.right = player.rect.left
             else:
                 self.rect.left = player.rect.right 
+
+            self.velocity.rotate_ip((random() - 0.5)* 15)
             self.velocity.x = -self.velocity.x
+            self.speed += 0.5
 
     def check_y_collision(self, player):
         if self.rect.colliderect(player.rect):
@@ -53,6 +56,7 @@ class Ball(Sprite):
                 self.rect.top = player.rect.bottom
             self.velocity.y = -self.velocity.y
 
+
     def update(self, left_player, right_player):
         vector = self.velocity*self.speed
         self.rect.x += vector.x
@@ -61,6 +65,14 @@ class Ball(Sprite):
         self.rect.y += vector.y
         self.check_y_collision(left_player)
         self.check_y_collision(right_player)
+
+        if self.rect.top <= 0:
+            self.rect.top = 0
+            self.velocity.y = -self.velocity.y
+        if self.rect.bottom >= 600:
+            self.rect.bottom = 600
+            self.velocity.y = -self.velocity.y
+
 window = pygame.Window('Ping Pong', (800, 600), pygame.WINDOWPOS_CENTERED)
 
 surface = window.get_surface()
@@ -118,4 +130,4 @@ while running:
     ball.render(surface)
     window.flip()
     clock.tick(60)
-    window.title = str(round(clock.get_fps())) + " FPS" 
+    window.title = str(round(clock.get_fps())) + " FPS"
